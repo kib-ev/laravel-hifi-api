@@ -15,7 +15,7 @@ class LaravelHifiApiServiceProvider extends ServiceProvider
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'kib-ev');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'kib-ev');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         // Publishing is only necessary when using the CLI.
