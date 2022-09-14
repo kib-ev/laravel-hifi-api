@@ -17,32 +17,25 @@ class LaravelHifiApi
         $this->password = config('laravel-hifi-api.password', '');
         $this->ipAddress = config('laravel-hifi-api.ip-address', '');
         $this->language = config('laravel-hifi-api.language', 'en-GB');
-
-        $this->updateSessionToken();
     }
 
     public function login()
     {
-        return $this->authRequest('https://b2b.hifi-filter.com/api/authentication/login', [
+        $response = $this->authRequest('https://b2b.hifi-filter.com/api/authentication/login', [
             'username' => $this->username,
             'password' => $password ?? $this->password,
             'ip' => $this->ipAddress,
         ]);
+
+        Cache::forget('hifi_session_token');
+        Cache::rememberForever('hifi_session_token', function () use ($response) {
+            return json_decode($response, true)['sessionToken'] ?? null;
+        });
+
+        return $response;
     }
 
-    public function updateSessionToken($force = false)
-    {
-        if($this->getSessionToken() == null || $force) {
-            Cache::forget('hifi_session_token');
-
-            Cache::rememberForever('hifi_session_token', function () {
-                $data = json_decode($this->login(), true);
-                return $data['sessionToken'] ?? null;
-            });
-        }
-    }
-
-    private function getSessionToken()
+    public function getSessionToken()
     {
         return Cache::get('hifi_session_token');
     }
